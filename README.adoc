@@ -16,3 +16,27 @@ short paragraph
 or two that highlights what the reader is going to learn.  It's nice to have a high-level overview of the data flow and deployment architecture ... although avoid too many details at this point.
 
 This section should also link to the {ref_arch_doc}.
+
+=== BPMS Driven Delivery
+
+Makes full use of managed repository
+System of truth is .niogit
+Developers share same bpms
+
+
+=== BxMS Continuous Delivery / DevOps
+
+Master is always in a deployable state
+System of truth is GitLab
+Every developer has BPMS instance
+
+
+=== Git Flow Model
+http://nvie.com/posts/a-successful-git-branching-model/
+
+Not fully automated
+Utilizes BPMS branching
+System of truth is GitLab
+Every developer has BPMS instance
+Developers never work on master
+Need BPMS branching capabilities

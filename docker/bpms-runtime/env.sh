@@ -1,8 +1,10 @@
 IP_ADDR=127.0.0.1
+EAP_VERSION=@EAP_VERSION@
+BPMS_VERSION=@BPMS_VERSION@
 RESOURCES_DIR=/resources
 CONFIGURATION_DIR=/configuration
-EAP=$RESOURCES_DIR/jboss-eap-6.4.4-full-build.zip
-BPMS=$RESOURCES_DIR/jboss-bpmsuite-6.2.0.ER5-deployable-eap6.x.zip
+EAP=$RESOURCES_DIR/jboss-eap-$EAP_VERSION-full-build.zip
+BPMS=$RESOURCES_DIR/jboss-bpmsuite-$BPMS_VERSION-deployable-eap6.x.zip
 SERVER_INSTALL_DIR=/opt/jboss
 SERVER_NAME=bpms
 SERVER_NAME_ORIG=jboss-eap-6.4

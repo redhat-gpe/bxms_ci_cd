@@ -1,0 +1,59 @@
+echo -en "****** BxMS CI / CD project ******** \n\n"
+
+NEXUS_VERSION=2.11.4-01
+BPMS_VERSION=6.2.0.ER5
+EAP_VERSION=6.4.4
+JENKINS_VERSION=1.625.1
+
+PROJECT_RESOURCE_DIR=$HOME/resources
+
+
+# Env variable substitions
+sed -i 's/@NEXUS_VERSION@/$NEXUS_VERSION/g' nexus/env.sh
+sed -i 's/@BPMS_VERSION@/$BPMS_VERSION/g' bpms-design/env.sh
+sed -i 's/@EAP_VERSION@/$EAP_VERSION/g' bpms-design/env.sh
+sed -i 's/@BPMS_VERSION@/$BPMS_VERSION/g' bpms-runtime/env.sh
+sed -i 's/@EAP_VERSION@/$EAP_VERSION/g' bpms-runtime/env.sh
+sed -i 's/@JENKINS_VERSION@/$JENKINS_VERSION/g' jenkins/Dockerfile
+
+# copy BPM install artifacts to bpms-design sub-project
+cp $PROJECT_RESOURCE_DIR/jboss-eap-* bpms-design/resources
+cp $PROJECT_RESOURCE_DIR/jboss-bpmsuite* bpms-design/resources
+
+# copy BPM install artifacts to bpms-runtime sub-project
+cp $PROJECT_RESOURCE_DIR/jboss-eap-* bpms-runtime/resources
+cp $PROJECT_RESOURCE_DIR/jboss-bpmsuite* bpms-runtime/resources
+
+# copy Nexus install zip to nexus sub-project
+cp $PROJECT_RESOURCE_DIR/nexus-* nexus/resources
+
+
+# Download Jenkins
+JENKINS_INSTALL_ZIP_PATH=jenkins/resources/jenkins-$JENKINS_VERSION.war
+if [ -f $JENKINS_INSTALL_ZIP_PATH ];
+then
+    echo -en "$JENKINS_INSTALL_ZIP_PATH found. Will not download\n"
+else
+	wget http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war -O $JENKINS_INSTALL_ZIP_PATH
+fi
+
+# Download tini-static
+TINI_STATIC_PATH=jenkins/resources/tini-static
+if [ -f $TINI_STATIC_PATH ];
+then
+    echo -en "$TINI_STATIC_PATH found. Will not download\n"
+else
+	wget https://github.com/krallin/tini/releases/download/v0.5.0/tini-static -O $TINI_STATIC_PATH
+fi
+
+# Build centos7-base
+echo -en "\n\n ***** Now building centos7-base *****\n"
+docker build --rm -t centos7/base centos7-base
+
+# Build centos7-java
+echo -en "\n\n ***** Now building centos7-java *****\n"
+docker build --rm -t centos7/java centos7-java
+
+# Build BxMS CI / CD images
+echo -en "\n\n ***** Now building bxms ci/cd images *****\n"
+docker-compose -p bpmscd build

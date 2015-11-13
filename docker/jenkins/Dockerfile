@@ -1,6 +1,7 @@
 FROM centos7/java
 
 ENV JENKINS_HOME /opt/jenkins
+ENV JENKINS_VERSION @JENKINS_VERSION@
 
 # Install packages
 RUN yum -y install wget git && \
@@ -13,7 +14,7 @@ RUN wget -O /etc/yum.repos.d/epel-apache-maven.repo http://repos.fedorapeople.or
 
 ADD resources/tini-static /bin/tini
 
-ADD resources/jenkins-1.625.1.war /usr/share/jenkins/jenkins.war
+ADD resources/jenkins-$JENKINS_VERSION.war /usr/share/jenkins/jenkins.war
 
 COPY jenkins.sh /usr/local/bin/jenkins.sh
 

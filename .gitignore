@@ -13,3 +13,6 @@ target/
 *.html
 *.log
 *.attach*
+*.zip
+*.war
+tini-static
