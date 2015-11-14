@@ -1,7 +1,7 @@
 FROM centos7/java
 
 ENV JENKINS_HOME /opt/jenkins
-ENV JENKINS_VERSION @JENKINS_VERSION@
+ENV JENKINS_VERSION 1.625.1
 
 # Install packages
 RUN yum -y install wget git && \

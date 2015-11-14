@@ -1,0 +1,137 @@
+:data-uri:
+:toc2:
+:rhtlink: link:https://www.redhat.com[Red Hat]
+
+image::images/rhheader.png[width=900]
+
+:numbered!:
+[abstract]
+== JBoss GPE Reference Architecture:  Template
+
+:numbered:
+
+== Abstract
+
+== Overview
+
+== Pre-Requisites
+
+== Procedure
+* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
+
+In my setup I also use data volume containers - this allows me to respawn the docker images without losing the setup and data. The way I set this up:
+* comment volumes-from statements in docker-compose.yml
+* build the images : docker-compose -p bpmscd build
+* smoke test the images
+* if ok, create data volume containers for the images that require it, using the same image , eg:
+docker create --name=bpmscd_mysql-bpms_data --volume=/var/lib/mysql/data bpmscd_mysql-bpms
+* uncomment the volumes-from statements in docker-compose.yml
+* launch the docker images : docker-compose -p bpmscd up -d
+
+-----
+git clone https://github.com/jbride/bxms_ci_cd.git
+-----
+
+-----
+cd $REF_ARCH_HOME/docker/
+-----
+
+. Build BxMS CI / CD images
++
+-----
+docker-compose -p bpmscd build
+-----
+
+. Create and starts containers from previously built images:
++
+-----
+docker-compose -p bpmscd up -d
+-----
+
+. View containers
++
+-----
+docker ps -a
+-----
+
+. Gain shell access to a running container
+.. using `docker ps -a`, select the name of the container to gain shell access to. ie; `docker_nexus_1`
+.. Execute:
++
+-----
+sudo nsenter -m -u -n -i -p -t `docker inspect --format '{{ .State.Pid }}' docker_nexus_1` /bin/bash
+-----
+
+. Stop containers
++
+-----
+docker-compose -p bpmscd stop
+-----
+
+. Delete all stopped containers
++
+-----
+docker rm $(docker ps -a -q)
+-----
+
+== Container Details
+
+=== MySQL RDBMS
+
+-----
+mysql -h <host_url> -u jboss -p bpmsdesign 
+mysql -h <host_url> -u jboss -p bpmstest
+mysql -h <host_url> -u jboss -p bpmsqa
+mysql -h <host_url> -u jboss -p bpmsprod
+-----
+
+Password for all of the above databases is: `jboss`
+
+=== Web Containers
+
+.Web container details
+[width="100%",cols="1,2,4",options="header"]
+|==============================================
+|Container|URL|User Credentials (userId / passwd)
+|docker_nexus_1|<host_url>:18080/|
+|docker_bpms-design_1|<host_url>:28080/business-central|admin1 / admin
+|docker_bpms-design_1|<host_url>:28080/business-central|busadmin / busadmin
+|docker_bpms-design_1|<host_url>:28080/business-central|user1 / user
+|docker_bpms-qa_1|<host_url>:38080/kie-server/services/rest/server|admin1 / admin
+|docker_bpms-prod_1|<host_url>:48080/kie-server/services/rest/server|admin1 / admin
+|==============================================
+
+
+== To-Do
+. resolve this problem
+. resolve that problem
+=======
+
+Prototype for ci/cd setup for JBoss BPMS
+
+* bpms-design: user joe/joe. Roles=admin,analyst,user,kie-server,kiemgmt
+* bpms-design: organizational unit 'acme'
+* bpms-design: repository 'policyquote'
+* local: repository 'policyquote' cloned from bpms.
+* local: added .gitignore, set git user to joe@acme.org
+* local: remote 'origin' renamed to 'bpms'
+* gitlab: created user 'joe/redhat01'
+* gitlab: uploaded ssh key 'id_rsa'
+* gitlab: created group acme-insurance, member=joe
+* local: added git remote for gitlab
++
+----
+$ git remote set-url origin ssh://git@localhost:10022/acme-insurance/policyquote.git
+----
+* jenkins: install plugin git-client, git, maven (update), workflow-aggregator
+* gitlab: create project for workflow script
+* nexus: add `http://download.devel.redhat.com/brewroot/repos/jb-bxms-6.2-build/latest/maven` repository
+* nexus: added all repositories to public group
+* jenkins image: configure git user settings
+* gitlab: create user jenkins, add to group acme-insurance
+* jenkins: create SSH key, added to Credentials plugin
+* gitlab: uploaded jenkins SSH key
+* note: bpms-runtime -> no support for quartz
+* jenkins: when running script from git repo, sandboxed by default. Permissions must be set in http://172.17.1.128:8080/scriptApproval/
+* gitlab: added webhook in policyquote project `http://172.17.1.151:8080/git/notifyCommit?url=ssh://git@gitlab/acme-insurance/policyquote.git`
+

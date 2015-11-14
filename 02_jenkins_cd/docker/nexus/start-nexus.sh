@@ -20,7 +20,7 @@ fi
 
 # configure nexus
 if [ ! -d "$NEXUS_DATA_DIR/conf" ]; then
-  mkdir $NEXUS_DATA_DIR/conf
+  mkdir -p $NEXUS_DATA_DIR/conf
   cp -r $CONFIGURATION_DIR/nexus.xml $NEXUS_DATA_DIR/conf
   VARS=( NEXUS_VERSION )
   for i in "${VARS[@]}"
