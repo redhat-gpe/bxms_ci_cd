@@ -29,11 +29,11 @@ docker create --name=bpmscd_mysql-bpms_data --volume=/var/lib/mysql/data bpmscd_
 * launch the docker images : docker-compose -p bpmscd up -d
 
 -----
-git clone https://github.com/jbride/bxms_ci_cd.git
+git clone https://github.com/jboss-gpe-ref-archs/bxms_ci_cd.git
 -----
 
 -----
-cd $REF_ARCH_HOME/docker/
+cd $REF_ARCH_HOME/02_jenkins_cd/docker/
 -----
 
 . Build BxMS CI / CD images
@@ -92,13 +92,13 @@ Password for all of the above databases is: `jboss`
 .Web container details
 [width="100%",cols="1,2,4",options="header"]
 |==============================================
-|Container|URL|User Credentials (userId / passwd)
-|docker_nexus_1|<host_url>:18080/|
-|docker_bpms-design_1|<host_url>:28080/business-central|admin1 / admin
-|docker_bpms-design_1|<host_url>:28080/business-central|busadmin / busadmin
-|docker_bpms-design_1|<host_url>:28080/business-central|user1 / user
-|docker_bpms-qa_1|<host_url>:38080/kie-server/services/rest/server|admin1 / admin
-|docker_bpms-prod_1|<host_url>:48080/kie-server/services/rest/server|admin1 / admin
+|Container|URL|Server Log|User Credentials (userId / passwd)
+|docker_nexus_1|<host_url>:18080/nexus|/date/logs/nexus.log|admin / admin123
+|docker_bpms-design_1|<host_url>:28080/business-central||admin1 / admin
+|docker_bpms-design_1|<host_url>:28080/business-central||busadmin / busadmin
+|docker_bpms-design_1|<host_url>:28080/business-central||user1 / user
+|docker_bpms-qa_1|<host_url>:38080/kie-server/services/rest/server||admin1 / admin
+|docker_bpms-prod_1|<host_url>:48080/kie-server/services/rest/server||admin1 / admin
 |==============================================
 
 
