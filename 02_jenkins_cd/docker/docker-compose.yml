@@ -5,52 +5,54 @@ nexus:
   volumes:
     - /data
   volumes_from:
-    - cd_nexus_data
+    - bxmscicd_storage
 mysql-bpms:
   build: mysql-bpms
   volumes:
     - /var/lib/mysql/data
   volumes_from:
-    - cd_mysqlbpms_data
+    - bxmscicd_storage
 bpms-design:
   build: bpms-design
   links:
     - mysql-bpms:mysql
     - nexus:nexus
   volumes:
-    - /opt/jboss/data
+    - /opt/jboss/bpms-design-data
   volumes_from:
-    - cd_bpmsdesign_data
+    - bxmscicd_storage
 bpms-qa:
   build: bpms-runtime
   links:
     - mysql-bpms:mysql
     - nexus:nexus
   volumes:
-    - /opt/jboss/data
+    - /opt/jboss/bpms-qa-data
   volumes_from:
-    - cd_bpmsqa_data
+    - bxmscicd_storage
   environment:
     - MYSQL_BPMS_SCHEMA=bpmsqa
     - KIE_SERVER_ID=bpms-qa
+    - BPMS_DATA_DIR=/opt/jboss/bpms-qa-data
 bpms-prod:
   build: bpms-runtime
   links:
     - mysql-bpms:mysql
     - nexus:nexus
   volumes:
-    - /opt/jboss/data
+    - /opt/jboss/bpms-prod-data
   volumes_from:
-    - cd_bpmsprod_data
+    - bxmscicd_storage
   environment:
     - MYSQL_BPMS_SCHEMA=bpmsprod
     - KIE_SERVER_ID=bpms-prod
+    - BPMS_DATA_DIR=/opt/jboss/bpms-prod-data
 postgresql-gitlab:
   build: postgresql-gitlab
   volumes:
     - /var/lib/pgsql
   volumes_from:
-    - cd_postgresqlgitlab_data
+    - bxmscicd_storage
   environment:
     - DB_NAME=gitlab_production
     - DB_USER=gitlab
@@ -72,7 +74,7 @@ gitlab:
     - /home/git/data
     - /var/log/gitlab
   volumes_from:
-    - cd_gitlab_data
+    - bxmscicd_storage
   environment:
     - TZ=Europe/Brussels
     - GITLAB_TIMEZONE=Brussels
@@ -118,7 +120,7 @@ jenkins:
   volumes:
     - /opt/jenkins
   volumes_from:
-    - cd_jenkins_data
+    - bxmscicd_storage
   links:
     - gitlab:gitlab
     - nexus:nexus

@@ -17,7 +17,7 @@ substitute_env_var() {
     sed -i "s/@JENKINS_VERSION@/$JENKINS_VERSION/g" jenkins/Dockerfile
 }
 
-copy_and_download() {
+copy_and_download_artifacts() {
     # copy BPM install artifacts to bpms-design sub-project
     echo -en "\nCopying BPM and EAP artifacts\n"
     cp $PROJECT_RESOURCE_DIR/jboss-eap-* bpms-design/resources
@@ -58,6 +58,11 @@ build_project() {
     echo -en "\n\n ***** Now building centos7-java *****\n"
     docker build --rm -t centos7/java centos7-java
 
+    # Build bxmscicd-storage
+    echo -en "\n\n ***** Now building bxmscicd-storage *****\n"
+    docker build --rm -t bxmscicd-storage .
+    
+
     # Build BxMS CI / CD images
     echo -en "\n\n ***** Now building bxms ci/cd images *****\n"
     docker-compose -p bpmscd build
@@ -69,6 +74,6 @@ clean() {
 }
 
 substitute_env_var
-copy_and_download
+copy_and_download_artifacts
 build_project
 clean

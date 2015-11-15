@@ -6,6 +6,8 @@ IPADDR=$(ip a s | sed -ne '/127.0.0.1/!{s/^[ \t]*inet[ \t]*\([0-9.]\+\)\/.*$/\1/
 
 echo "IPADDR = $IPADDR"
 
+echo "BPMS_DATA_DIR  $BPMS_DATA_DIR"
+
 MYSQL_HOST_IP=mysql
 MYSQL_HOST_PORT=3306
 NEXUS_IP=$(ping -q -c 1 -t 1 nexus | grep -m 1 PING | cut -d "(" -f2 | cut -d ")" -f1)

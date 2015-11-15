@@ -39,8 +39,17 @@ cd $REF_ARCH_HOME/02_jenkins_cd/docker/
 . Build BxMS CI / CD images
 +
 -----
-docker-compose -p bpmscd build
+./project_build.sh
 -----
+
+. Start bxmcicd-storage container
++
+-----
+docker run -d --name=bxmscicd_storage bxmscicd-storage
+-----
++
+NOTE: The `status` of the `bxmscicd-storage` container will be `Exited`.  
+This is normal behavior as the container does not run an operating system process and is only used to attach to other running containers.
 
 . Create and starts containers from previously built images:
 +
@@ -79,10 +88,10 @@ docker rm $(docker ps -a -q)
 === MySQL RDBMS
 
 -----
-mysql -h <host_url> -u jboss -p bpmsdesign 
-mysql -h <host_url> -u jboss -p bpmstest
-mysql -h <host_url> -u jboss -p bpmsqa
-mysql -h <host_url> -u jboss -p bpmsprod
+mysql -h <fqdn> -u jboss -p bpmsdesign 
+mysql -h <fqdn> -u jboss -p bpmstest
+mysql -h <fqdn> -u jboss -p bpmsqa
+mysql -h <fqdn> -u jboss -p bpmsprod
 -----
 
 Password for all of the above databases is: `jboss`
@@ -93,12 +102,13 @@ Password for all of the above databases is: `jboss`
 [width="100%",cols="1,2,4",options="header"]
 |==============================================
 |Container|URL|Server Log|User Credentials (userId / passwd)
-|docker_nexus_1|<host_url>:18080/nexus|/date/logs/nexus.log|admin / admin123
-|docker_bpms-design_1|<host_url>:28080/business-central||admin1 / admin
-|docker_bpms-design_1|<host_url>:28080/business-central||busadmin / busadmin
-|docker_bpms-design_1|<host_url>:28080/business-central||user1 / user
-|docker_bpms-qa_1|<host_url>:38080/kie-server/services/rest/server||admin1 / admin
-|docker_bpms-prod_1|<host_url>:48080/kie-server/services/rest/server||admin1 / admin
+|docker_nexus_1|<fqdn>:18080/nexus|/date/logs/nexus.log|admin / admin123
+|docker_bpms-design_1|<fqdn>:28080/business-central||admin1 / admin
+|docker_bpms-design_1|<fqdn>:28080/business-central||busadmin / busadmin
+|docker_bpms-design_1|<fqdn>:28080/business-central||user1 / user
+|docker_bpms-qa_1|<fqdn>:38080/kie-server/services/rest/server||admin1 / admin
+|docker_bpms-prod_1|<fqdn>:48080/kie-server/services/rest/server||admin1 / admin
+|docker_gitlab_1|<fqdn>:10080|/var/log/gitlab/gitlab/application.log|root / 5iveL!fe (password reset in Partner Demo System to: jb0ssredhat! )
 |==============================================
 
 
