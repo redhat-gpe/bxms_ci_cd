@@ -1,16 +1,13 @@
 :data-uri:
-:toc2:
-:rhtlink: link:https://www.redhat.com[Red Hat]
+:toc: manual
+:toc-placement: preamble
 
-image::images/rhheader.png[width=900]
 
-:numbered!:
-[abstract]
-== JBoss GPE Reference Architecture:  Template
+= BxMS CI / CD using Jenkins
+
+BxMS Continuous Integration / Delivery using *Jenkins* orchestration
 
 :numbered:
-
-== Abstract
 
 == Overview
 
@@ -38,7 +35,7 @@ A clone of this project is already available on the `bxmscicd` virtual machine i
 This section can be skipped if using the `bxmscicd` virtual machine.
 
 If not using the `bxmscicd` virtual machine, this project can be cloned as follows:
- 
+
 -----
 git clone https://github.com/jboss-gpe-ref-archs/bxms_ci_cd.git
 -----
@@ -75,7 +72,7 @@ vi project_build.sh
 docker run -d --name=bxmscicd_storage bxmscicd-storage
 -----
 +
-NOTE: After start-up, the `status` of the `bxmscicd-storage` container will be `Exited`.  
+NOTE: After start-up, the `status` of the `bxmscicd-storage` container will be `Exited`.
 This is normal behavior as the container does not run an operating system process and is only used to attach to other running containers.
 
 . Inspect mount paths of container volumes:
@@ -147,7 +144,7 @@ docker rm $(docker ps -a -q)
 === MySQL RDBMS
 
 -----
-mysql -h <fqdn> -u jboss -p bpmsdesign 
+mysql -h <fqdn> -u jboss -p bpmsdesign
 mysql -h <fqdn> -u jboss -p bpmstest
 mysql -h <fqdn> -u jboss -p bpmsqa
 mysql -h <fqdn> -u jboss -p bpmsprod
@@ -213,3 +210,6 @@ docker create --name=bpmscd_mysql-bpms_data --volume=/var/lib/mysql/data bpmscd_
 * uncomment the volumes-from statements in docker-compose.yml
 * launch the docker images : docker-compose -p bpmscd up -d
 
+ifdef::showScript[]
+
+endif::showScript[]

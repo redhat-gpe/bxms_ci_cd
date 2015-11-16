@@ -1,0 +1,20 @@
+data-uri:
+:toc: manual
+:toc-placement: preamble
+:rhtlink: link:https://www.redhat.com[Red Hat]
+
+= Git Flow Model
+
+BxMS Continuous Integration / Delivery using *Jenkins* as the orchestration engine and adhering to principles of the `Git Flow` model.
+
+:numbered:
+
+== Overview
+
+== Pre-Requisites
+
+== Procedure
+
+ifdef::showScript[]
+
+endif::showScript[]
