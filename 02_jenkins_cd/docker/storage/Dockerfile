@@ -32,11 +32,13 @@ VOLUME /opt/jboss/bpms-prod-data
 
 
 # Gitlab Postgresql
+RUN mkdir -p /var/lib/pgsql
 RUN groupadd -r postgres -g 26 && useradd -u 26 -r -g postgres -d /var/lib/pgsql -s /bin/bash postgres
+RUN chown -R postgres:postgres /var/lib/pgsql
 VOLUME /var/lib/pgsql
 
 # Gitlab
-RUN groupadd -r git -g 1000 && useradd -u 1000 -g git -c "GitLab" git
+RUN groupadd -r git -g 1500 && useradd -u 1500 -g git -c "GitLab" git
 RUN mkdir -p /home/git/data
 RUN mkdir -p /var/log/gitlab
 RUN chown -R git:git /home/git/data

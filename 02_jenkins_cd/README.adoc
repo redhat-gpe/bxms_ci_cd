@@ -17,30 +17,57 @@ image::images/rhheader.png[width=900]
 == Pre-Requisites
 
 == Procedure
-* For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this reference architecture.
 
-In my setup I also use data volume containers - this allows me to respawn the docker images without losing the setup and data. The way I set this up:
-* comment volumes-from statements in docker-compose.yml
-* build the images : docker-compose -p bpmscd build
-* smoke test the images
-* if ok, create data volume containers for the images that require it, using the same image , eg:
-docker create --name=bpmscd_mysql-bpms_data --volume=/var/lib/mysql/data bpmscd_mysql-bpms
-* uncomment the volumes-from statements in docker-compose.yml
-* launch the docker images : docker-compose -p bpmscd up -d
+=== Docker accessibility
+At start-up, Docker reverts its permissions so that only the `root` operating system user is authorized to execute `docker` commands.
 
+In this lab, the pre-existing `jboss` should be allowed to execute `docker` commands.
+The `jboss` user is already associated with the group: `dockerroot`.
+
+Modify Docker permissions as follows such that those users in the `dockerroot` group are able to execute `docker` commands:
+
+-----
+sudo chgrp dockerroot /var/run/docker.sock
+-----
+
+NOTE:  This command will need to be executed every time the `docker` service is restarted (ie: when the host operating system is restarted).
+
+
+=== Clone project
+A clone of this project is already available on the `bxmscicd` virtual machine in the `jboss` operating system user's home directory: `$HOME/bxms_ci_cd`.
+This section can be skipped if using the `bxmscicd` virtual machine.
+
+If not using the `bxmscicd` virtual machine, this project can be cloned as follows:
+ 
 -----
 git clone https://github.com/jboss-gpe-ref-archs/bxms_ci_cd.git
 -----
 
+NOTE: For the purposes of this documentation, the name _$REF_ARCH_HOME_ refers to the root directory of this cloned project (ie: `$HOME/bxms_ci_cd` ).
+
+=== Build Docker images
+The `bxmcicd` virtual machine already includes all of the needed Docker images to support this project.
+This section can be skipped if using the `bxmscicd` virtual machine.
+
+If not using the `bxmscicd` virtual machine, this project can be cloned as follows:
+
+. Change directories into the folder where the source code to the project's images reside:
++
 -----
 cd $REF_ARCH_HOME/02_jenkins_cd/docker/
 -----
-
+. Review the details of the project's build script:
++
+-----
+vi project_build.sh
+-----
 . Build BxMS CI / CD images
 +
 -----
 ./project_build.sh
 -----
+
+=== BxMS Storage image
 
 . Start bxmcicd-storage container
 +
@@ -48,10 +75,42 @@ cd $REF_ARCH_HOME/02_jenkins_cd/docker/
 docker run -d --name=bxmscicd_storage bxmscicd-storage
 -----
 +
-NOTE: The `status` of the `bxmscicd-storage` container will be `Exited`.  
+NOTE: After start-up, the `status` of the `bxmscicd-storage` container will be `Exited`.  
 This is normal behavior as the container does not run an operating system process and is only used to attach to other running containers.
 
-. Create and starts containers from previously built images:
+. Inspect mount paths of container volumes:
++
+-----
+docker inspect bxmscicd_storage
+-----
++
+In particular, review the mappings defined in the `Mounts` JSON array between the container `destination` and the `Source` directory on the host file system, ie:
++
+-----
+{
+    "Destination": "/var/log/gitlab",
+    "Driver": "local",
+    "Mode": "",
+    "Name": "b54ed365d3bf77312d68322858e81bc3a08df4899db285dfb80f77adf0f8e54a",
+    "RW": true,
+    "Source": "/var/lib/docker/volumes/b54ed365d3bf77312d68322858e81bc3a08df4899db285dfb80f77adf0f8e54a/_data"
+},
+-----
+
+. View files (on host operating system) from mounted container volumes:
++
+-----
+sudo tree /var/lib/docker/volumes
+-----
+
+=== BxMS CI CD images
+
+. If not already there, change directories to where the project's image source code resides:
++
+-----
+cd $REF_ARCH_HOME/02_jenkins_cd/docker/
+-----
+. Create and start `bxmscicd` containers from previously built images:
 +
 -----
 docker-compose -p bpmscd up -d
@@ -144,4 +203,13 @@ $ git remote set-url origin ssh://git@localhost:10022/acme-insurance/policyquote
 * note: bpms-runtime -> no support for quartz
 * jenkins: when running script from git repo, sandboxed by default. Permissions must be set in http://172.17.1.128:8080/scriptApproval/
 * gitlab: added webhook in policyquote project `http://172.17.1.151:8080/git/notifyCommit?url=ssh://git@gitlab/acme-insurance/policyquote.git`
+
+In my setup I also use data volume containers - this allows me to respawn the docker images without losing the setup and data. The way I set this up:
+* comment volumes-from statements in docker-compose.yml
+* build the images : docker-compose -p bpmscd build
+* smoke test the images
+* if ok, create data volume containers for the images that require it, using the same image , eg:
+docker create --name=bpmscd_mysql-bpms_data --volume=/var/lib/mysql/data bpmscd_mysql-bpms
+* uncomment the volumes-from statements in docker-compose.yml
+* launch the docker images : docker-compose -p bpmscd up -d
 
