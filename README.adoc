@@ -16,7 +16,7 @@ The purpose of this reference architecture is to introduce various Continuous In
 == OVERVIEW:
 This reference architecture investigates the following CI / CD workflows:
 
-=== BPMS Driven Delivery
+=== BPM Suite Centric CI / CD
 In this approach, the CI / CD features provided by the BPM Suite 6 product are utilized.
 
 This reference architecture is particularly relevant to those with experience with other BPM products that provide native support for continuous integration and delivery.
@@ -29,7 +29,7 @@ Highlights of this `BPMS Driven Delivery` approach include:
 
 Details can be found in the {01bpmscicd}.
 
-=== BxMS Continuous Delivery using Jenkins
+=== CI / CD using Jenkins
 In this approach, Jenkins is utilized to orchestrate CI / CD workflows of BxMS business processes and rules.
 
 This reference architecture is particularly relevant to software developers already proficient with (and have an appreciation for) Jenkins and hosted Git repositories (such as Github or Gitlab).
@@ -43,7 +43,7 @@ Highlights of this `Jenkins` focused approach are as follows:
 
 Details can be found in the {02jenkinscd}.
 
-=== Git Flow Model
+=== CI / CD via the Git Flow Model
 In this approach, Jenkins and GitLab continue to be utilized to orchestrate CI / CD workflows of BxMS business processes and rules.
 Additionally, the {gitflow} approach is leveraged.
 
