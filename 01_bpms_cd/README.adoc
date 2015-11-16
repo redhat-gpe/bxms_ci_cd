@@ -1,4 +1,4 @@
-data-uri:
+:data-uri:
 :toc: manual
 :toc-placement: preamble
 :rhtlink: link:https://www.redhat.com[Red Hat]
