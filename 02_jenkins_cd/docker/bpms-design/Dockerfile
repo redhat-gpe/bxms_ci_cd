@@ -1,3 +1,7 @@
+# docker build --rm -t bpmscd_bpms-design .
+# docker run -p 28080:8080 -d --name=bpmscd_bpms-design_1 bpmscd_bpms-design
+# docker run -p 28080:8080 -d --link bpmscd_mysql-bpms_1:mysql --link bpmscd_nexus_1:nexus --name=bpmscd_bpms-design_1 bpmscd_bpms-design
+
 FROM centos7/java
 
 MAINTAINER Bernard Tison <bernard.tison@gmail.com>

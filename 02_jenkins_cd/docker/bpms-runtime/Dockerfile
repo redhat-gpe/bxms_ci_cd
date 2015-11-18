@@ -1,3 +1,6 @@
+# docker build --rm -t bpmscd_bpms-qa .
+# docker run -p 8080:8080 -d --name=bpmscd_bpms-qa_1 bpmscd_bpms-qa
+
 FROM centos7/java
 
 MAINTAINER Bernard Tison <bernard.tison@gmail.com>
