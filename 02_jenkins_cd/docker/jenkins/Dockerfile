@@ -49,7 +49,11 @@ RUN curl -L -o $JENKINS_REF/plugins/workflow-scm-step.hpi http://updates.jenkins
 RUN curl -L -o $JENKINS_REF/plugins/workflow-support.hpi http://updates.jenkins-ci.org/latest/workflow-support.hpi
 RUN curl -L -o $JENKINS_REF/plugins/workflow-step-api.hpi http://updates.jenkins-ci.org/latest/workflow-step-api.hpi
 RUN curl -L -o $JENKINS_REF/plugins/workflow-aggregator.hpi http://updates.jenkins-ci.org/latest/workflow-aggregator.hpi
+RUN curl -L -o $JENKINS_REF/plugins/durable-task.hpi http://updates.jenkins-ci.org/latest/durable-task.hpi
 
+# Add bpms-cicd job config.xml
+RUN mkdir -p $JENKINS_REF/jobs/bpms-cicd
+ADD config/config.xml $JENKINS_REF/jobs/bpms-cicd/config.xml
 
 # Set permissions
 RUN mkdir "$JENKINS_HOME" && \
