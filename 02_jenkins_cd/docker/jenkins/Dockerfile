@@ -37,6 +37,7 @@ RUN curl -L -o $JENKINS_REF/plugins/scm-api.hpi http://updates.jenkins-ci.org/la
 RUN curl -L -o $JENKINS_REF/plugins/ssh-credentials.hpi http://updates.jenkins-ci.org/latest/ssh-credentials.hpi
 RUN curl -L -o $JENKINS_REF/plugins/credentials.hpi http://updates.jenkins-ci.org/latest/credentials.hpi
 RUN curl -L -o $JENKINS_REF/plugins/mailer.hpi http://updates.jenkins-ci.org/latest/mailer.hpi
+RUN curl -L -o $JENKINS_REF/plugins/git-server.hpi http://updates.jenkins-ci.org/latest/git-server.hpi
 
 # workflow plugin
 RUN curl -L -o $JENKINS_REF/plugins/workflow-job.hpi http://updates.jenkins-ci.org/latest/workflow-job.hpi
@@ -50,6 +51,8 @@ RUN curl -L -o $JENKINS_REF/plugins/workflow-support.hpi http://updates.jenkins-
 RUN curl -L -o $JENKINS_REF/plugins/workflow-step-api.hpi http://updates.jenkins-ci.org/latest/workflow-step-api.hpi
 RUN curl -L -o $JENKINS_REF/plugins/workflow-aggregator.hpi http://updates.jenkins-ci.org/latest/workflow-aggregator.hpi
 RUN curl -L -o $JENKINS_REF/plugins/durable-task.hpi http://updates.jenkins-ci.org/latest/durable-task.hpi
+RUN curl -L -o $JENKINS_REF/plugins/ace-editor.hpi http://updates.jenkins-ci.org/latest/ace-editor.hpi
+RUN curl -L -o $JENKINS_REF/plugins/jquery-detached.hpi http://updates.jenkins-ci.org/latest/jquery-detached.hpi
 
 # Add bpms-cicd job config.xml
 RUN mkdir -p $JENKINS_REF/jobs/bpms-cicd

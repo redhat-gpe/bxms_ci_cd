@@ -9,7 +9,7 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>http://gitlab/joe/insurancepolicy-jenkins-workflow.git</url>
+          <url>https://github.com/gpe-mw-training/insurancepolicy-jenkins-workflow.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
