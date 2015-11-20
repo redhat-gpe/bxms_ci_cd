@@ -1,19 +1,185 @@
-:data-uri:
+:source-highlighter: coderay
+:numbered!:
+:icons:
+:docdatetime: 2015-11-09 13:16:43 CET
+:revnumber: 2
+:category: GPE
 :toc: manual
 :toc-placement: preamble
-:rhtlink: link:https://www.redhat.com[Red Hat]
+:title: BxMS CI / CD - BPMS Driven Delivery
 
-= BPMS Driven Delivery
+= {title}
 
-BxMS Continuous Integration / Delivery using tooling native to the BxMS product.
+.Goals
+. Investigation of CI / CD workflows of business processes and rules using innate tooling of Red Hat `BPM Suite`
 
-:numbered:
+== Assumptions
 
-== Overview
+. Most members of the development team are less technical, and/or have little or no experience with tools like git, maven.
+. Development team uses BPMS as their primary development tool. The development team uses a shared BPMS instance
+. All other tools involved in the CI/CD architecture (GitLab, Jenkins, Nexus, ...) are a given, and should not be a concern for the development team.
+. The development team is only reponsible for developing process and/or rule artifacts. All supporting artifacts (data model, workitemhandlers, integration code, ...) are the responsibility of Java developer teams and have their own lifecycle and toolchains. (this is according to the project structure as proposed by Justin Holmes). These suppporting artifacts are made available to BPMS projects through a Nexus server.
 
-== Pre-Requisites
+== Scenario 1 : Completely bpms-driven
 
-== Procedure
+In this scenario, only the BPMS tooling is used.
+
+It relies on the managed repository functionality provided by BPMS to manage branches and promote or release development artifacts.
+
+The development team consists of:
+
+* 1 or more developers, responsible for creating development artifacts (process definitions, rule packages) (Joe, Jack)
+* a release manager, responsible for promoting and releasing artifacts (Alice)
+
+==== Development cycle
+
+A typical development cycle could consist of:
+
+* [Alice] [BPMS] +
+Creates new repository in BPMS. The repository is of type _managed, multi-project_. +
+Initial version is 1.0-SNAPSHOT. +
+Branches are created by BPMS : master, release-1.0, dev-1.0
+
+* [Alice] [BPMS] +
+Creates new project in branch _dev-1.0_.
+
+* [Joe] [BPMS] +
+Does development in branch _dev-1.0_. +
+When the result is satisfactory, starts the _promote_ workflow. +
+The _promote_ workflow creates a user task for selection of artifacts to promote. +
+Joe claims the task, selects the artifacts, marks the task as _Requires review_. +
+Joe completes the task. +
+The _promote_ workflow creates a new human task for review.
+
+* [Alice] [BPMS] +
+Claims the _review_ task. +
+Alice accepts the promotion request, and completes the task. +
+Note: if Alice rejects the promotion request, the _promotion_ workflow loops back to the selecton task.
+The _promote_ workflow advances the _release-1.0_ branch to the latest commit of the _dev-1.0_ that touches artifacts selected for promotion. +
+Note : this is not cherry-picking or a merge. The HEAD of the _release-1.0_ branch is forcefully set to the selected commit of the _dev-1.0_ branch.
+
+* [Alice,Joe] [BPMS] +
+More iterations of the develop-promote workflow.
+
+* [Alice] [BPMS] +
+When the codebase is deemed ready for release, Alice starts the _release_ workflow. +
+The _release_ workflow bumps the version of the _release-1.0_ branch to `1.0`. +
+Alice launches the _configure_ workflow to create `dev-1.1` and `release-1.1` branches, using `dev-1.0` as starting point. +
+Alice bumps the version in the project pom files to `1.1-SNAPSHOT` in the _dev-1.1_ branch.
+
+* [Joe] [BPMS] +
+Continues development in branch _dev-1.1_.
+
+
+==== Integration with CI/CD pipeline
+
+Possible integration points:
+
+* Use support for _post-commit_ hooks in BPMS to synchronize the BPMS repo with the Gitlab repo. Jenkins pipeline triggered by web-hook in GitLab, or by polling job in Jenkins. +
+The Jenkins pipeline is only triggered on changes in release branches.
+* Use support for _post-commit_ hooks in BPMS to signal Jenkins directly.
+* Use Jenkins polling job to react on commits in the BPMS git repo.
+
+==== Discussion
+
+* The built-in promote workflow is not merging or cherrypicking branches, but resets the head of the release branch. As such it is not possible to isolate commits. This becomes particularly problematic when there are several developers working on the same repository (even when working on different projects within the same repo). +
+One way to overcome this, is to limit code promotion to a 'freeze the world' situation. All developers work on the dev branch. When the code is deemed ready to be promoted, no more changes to the development branch are allowed. The current state of the dev branch is promoted, build pipeline is triggered etc... Developement is limited to stabilising the release (fix issues in dev branch, promote fixes). Once the release is stabilized, development can be resumed.
+* Initial testing of artifacts by the developer. This usually involves building and deploying the kjar. When several developers are working on the same project, unstable commits of one developer can prevent building and deploying by another developer. Also, to redeploy a kjar, it must first be undeployed. So developers cannot independently test their code. +
+Workaround : have some BPMS instances running for testing purposes. When doing 'build and deploy', the developer can choose to deploy to one of the test instances.
+* Git workflow : the proposed workflow is simplistic, as it only uses dev and release branches. A release can only be done from a release branch, but there is no merge to master. In most accepted git worklows, master corresponds to what is in production.
+* CI/CD pipeline integration: BPMS post-commit hooks are fired for every commit (which in BPMS corresponds to every save operation), which makes it hard to use as trigger for a build pipeline, as it could easily flood the Jenkins system. +
+Moreover, the _promote_ workflow does not involve commits to the git repo, so promotion of code would not trigger a build pipeline. +
+A better approach is to have Jenkins poll the git repo for changes in the release branch (needs to be tested).
+
+==== Conclusion
+
+Relying on the built-in functionalities of BPMS for code promotion and release management might work in the simplest of scenarios, with only one developer working on a repo at any moment in time. +
+On bigger teams, the limitations imposed on testing, code promotion, release cycle etc hampers efficiency.
+
+
+== Scenario 2 : Partially bpms-driven
+
+In this scenario, a combination of BPMS tooling  and git command line tooling is used. It relies on the managed repository functionality provided by BPMS, but does not use the built-in functionalities to manage branches and promote or release development artifacts.
+
+In this scenario, the developers work exclusively in BPMS. The release manager however, relies on git tooling (comand line, graphical tool) for managing code promotions and releases. +
+So while the developers are not exposed to git internals, the release manager needs appropriate git skills.
+
+The development team consists of:
+
+* 1 or more developers, responsible for creating development artifacts (process definitions, rule packages) (Joe, Jack)
+* a release manager, responsible for promoting and releasing artifacts (Alice)
+
+==== Development cycle
+
+A typical development cycle could consist of:
+
+* [Alice] [BPMS] +
+Creates new repository in BPMS. The repository is of type _managed, multi-project_. +
+Initial version is 1.0-SNAPSHOT. +
+Branches are not automatically created by BPMS +
+Version master branch : 1.0-SNAPSHOT.
+
+* [Alice] [Local] +
+Clones repository from BPMS. +
+Creates branches _dev_, _release-1.0_. +
+Sets version of release branch to 1.0-rc-SNAPSHOT. +
+Pushes _dev_, _release_ branches to BPMS. +
+Pushes repository to central repository (GitLab).
+
+* [Alice] [BPMS] +
+Creates new project in branch _dev_.
+
+* [Joe] [BPMS] +
+Does development in branch _dev_. +
+When the result is satisfactory, starts the _promote_ workflow. +
+The _promote_ workflow creates a user task for selection of artifacts to promote. +
+Joe claims the task, selects the artifacts, marks the task as _Requires review_. +
+Joe completes the task. +
+The _promote_ workflow creates a new human task for review.
+
+* [Alice] [BPMS] +
+Claims the _review_ task. +
+Alice accepts the promotion request, but does not complete the task. Instead she aborts the process instance. +
+
+* [Alice] [Local] +
+Alice cherry picks (or merges if possible) the commits to be promoted from the _dev_ to the _release_ branch. +
+The _release_ branch is pushed to BPMS, and to the central Git repository. +
+The changes on the release branch in the central Git repository trigger a build pipeline on Jenkins.
+
+* [Alice,Joe,Jack] [BPMS] +
+More iterations of the develop-promote workflow.
+
+* [Alice] [Local] +
+When the codebase in the _release_ branch is deemed ready for production, Alice merges the _release_ branch to _master_. +
+Bumps the version of the _master_ branch to 1.0. +
+Bumps the version of the _dev_ branch to 1.1-SNAPSHOT +
+Note: the maven version plugin can be used  to help with version management. There are also more specialized maven plugins for support of GitFlow-like branching and versioning strategies.
+Creates a new _release-1.1_ branch with version 1.1-rc-SNAPSHOT +
+Pushes the _master_ branch to the central repository. This triggers a build pipeline on Jenkins. +
+Pushes the _dev_, _release-1.1_ and _master_ to BPMS.
+If the _master_ branch build pipeline and subsequent tests are successful, the branch is tagged for production. The _release-1.0_ branch is no longer used from that point on.
+
+* [Joe,Jack] [BPMS] +
+Continue development on the _dev_ branch,
+Code is promoted to _release-1.1_ when appropriate.
+
+==== Integration with CI/CD pipeline
+
+* Jenkins is integrated with the central Git repository through web hooks on the repository side, or through a polling job in Jenkins.
+* The Jenkins pipeline is triggered by changes in _release-x.x_ and _master_ branches, which are in a deployable state.
+
+==== Discussion
+
+* Usage of a shared version of BPMS makes testing by the developer harder. This does not change compared to the first scenario.
+* The git branching strategy and version management is more close to generally accepted workflows like GitFlow. Ongoing development is happening in a development branch. Release branches are shortlived branches that contain the code for the next release. The master branch reflects what is deployed in production.
+
+==== Conclusion
+
+Combining development in BPMS with code promotion and release supported by specialized tools (git command line, maven plugins) allows to shield less technical developers from git and maven, while still allowing for an acceptable release and version management.
+The fact that there might be several developers working on the same BPMS repository is less problematic than in the first scenario, as the promotion to the release branch can be done by cherry-picking. But it should be noted that cherry-picking is in general more error-prone than merging branches. However, merging would require that individual developers can isolate their ongoing work in feature branches. In the current state of the BPMS tooling this approach cannot be achieved without the developer being skilled with git skills and tooling.
+
+
+'''
 
 ifdef::showScript[]
 
