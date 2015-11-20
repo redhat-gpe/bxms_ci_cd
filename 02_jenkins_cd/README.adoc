@@ -295,6 +295,10 @@ origin	ssh://git@localhost:10022/acme-insurance/insurancepolicy.git (fetch)
 origin	ssh://git@localhost:10022/acme-insurance/insurancepolicy.git (push)
 ----
 
+image::images/script_approve.png[]
+
+*
+
 * jenkins image: configure git user settings
 * jenkins: create SSH key, added to Credentials plugin
 * gitlab: uploaded jenkins SSH key
