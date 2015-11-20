@@ -17,9 +17,9 @@ The purpose of this reference architecture is to introduce various Continuous In
 This reference architecture investigates the following CI / CD workflows:
 
 === BPM Suite Centric CI / CD
-In this approach, the CI / CD features provided by the BPM Suite 6 product are utilized.
+In this approach, the out-of-the-box CI / CD features provided by the BPM Suite 6 product are utilized.
 
-This reference architecture is particularly relevant to those with experience with other BPM products that provide native support for continuous integration and delivery.
+This reference architecture is particularly relevant to those with experience with other BPM products that also provide native support for continuous integration and delivery.
 
 Highlights of this `BPMS Driven Delivery` approach include:
 
