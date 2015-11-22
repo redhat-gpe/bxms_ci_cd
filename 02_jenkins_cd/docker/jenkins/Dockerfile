@@ -21,7 +21,7 @@ ADD resources/tini-static /bin/tini
 
 ADD resources/jenkins-$JENKINS_VERSION.war /usr/share/jenkins/jenkins.war
 
-COPY jenkins.sh /usr/local/bin/jenkins.sh
+COPY bin/jenkins.sh /usr/local/bin/jenkins.sh
 
 ADD config/maven-settings.xml /maven-settings.xml
 
@@ -54,14 +54,34 @@ RUN curl -L -o $JENKINS_REF/plugins/durable-task.hpi http://updates.jenkins-ci.o
 RUN curl -L -o $JENKINS_REF/plugins/ace-editor.hpi http://updates.jenkins-ci.org/latest/ace-editor.hpi
 RUN curl -L -o $JENKINS_REF/plugins/jquery-detached.hpi http://updates.jenkins-ci.org/latest/jquery-detached.hpi
 
+# Set global jenkins config.xml
+ADD config/config.xml $JENKINS_REF/config.xml
+
 # Add bpms-cicd job config.xml
 RUN mkdir -p $JENKINS_REF/jobs/bpms-cicd
-ADD config/config.xml $JENKINS_REF/jobs/bpms-cicd/config.xml
+ADD config/jobs/bpms-cicd/config.xml $JENKINS_REF/jobs/bpms-cicd/config.xml
+
+# Copy SSH Key Pair
+ADD config/ssh $JENKINS_REF/.ssh
+
+# Set Jenkins approvals for groovy scripts
+ADD config/scriptApproval.xml $JENKINS_REF/scriptApproval.xml
+
+# Set .gitconfig
+ADD config/gitconfig $JENKINS_REF/.gitconfig
 
 # Set permissions
 RUN mkdir "$JENKINS_HOME" && \
     chown -R jenkins:jenkins "$JENKINS_HOME" /usr/share/jenkins/ref /maven-settings.xml && \
     chmod +x /bin/tini /usr/local/bin/jenkins.sh
+
+# Ensure ssh key permissions
+RUN chmod 600 $JENKINS_REF/.ssh/*
+
+# Simple network troubleshooting tool called from Groovy workflow scripts
+COPY bin/checkPort.sh /usr/local/bin/checkPort.sh
+RUN chmod +x /usr/local/bin/checkPort.sh
+
 
 USER jenkins
 

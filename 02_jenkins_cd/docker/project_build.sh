@@ -38,6 +38,16 @@ copy_and_download_artifacts() {
     else
     	wget http://mirrors.jenkins-ci.org/war/$JENKINS_VERSION/jenkins.war -O $JENKINS_INSTALL_ZIP_PATH
     fi
+
+    # Ensure and copy this host user's private key such that (for demo simplification purposes) the key is shared with jenkins to authenticate into gitlab
+    if [ -f $HOME/.ssh/id_jenkins ];
+    then
+        cp $HOME/.ssh/id_jenkins jenkins/config/ssh/id_rsa
+    else
+        echo -en "For purposes of auto-configuring jenkins in this demo, must have a private key at: $HOME/.ssh/id_jenkins.  Please review the documentation for this lab for more details\n";
+        exit 1;
+    fi
+    
     
     # Download tini-static
     TINI_STATIC_PATH=jenkins/resources/tini-static
@@ -47,6 +57,7 @@ copy_and_download_artifacts() {
     else
     	wget https://github.com/krallin/tini/releases/download/v0.5.0/tini-static -O $TINI_STATIC_PATH
     fi
+
 }
 
 build_project() {

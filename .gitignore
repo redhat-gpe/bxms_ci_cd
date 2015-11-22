@@ -16,3 +16,4 @@ target/
 *.zip
 *.war
 tini-static
+id_rsa
