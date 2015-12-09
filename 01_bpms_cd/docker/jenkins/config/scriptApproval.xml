@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scriptApproval plugin="script-security@1.13">
+  <approvedScriptHashes>
+    <string>0ebe158b199ca74a221b8ff0047cb5f748eb1169</string>
+    <string>520210d6289498af047c6aae5296e54fee3f1edc</string>
+    <string>59b5dde2df974e5207c7e9fcfab1ba2b00248042</string>
+    <string>5b31035997bbb05560516e90bcf9a9c227dd84d0</string>
+    <string>7bf8f73d6681c9acfd6f6ee42be37aefc3e89328</string>
+    <string>9aa278d685f31b8cc597425e762a5cdeab101a7e</string>
+    <string>a03ded3afbad7851797d733500e884f57a162329</string>
+    <string>c06293c418bb4a2763961dc368ffabfed17c5c69</string>
+    <string>c6303ba327cfd930ba98f7c47fdce1b8c64c56a2</string>
+  </approvedScriptHashes>
+  <approvedSignatures>
+    <string>method groovy.lang.GroovyObject getProperty java.lang.String</string>
+    <string>method groovy.lang.GroovyObject invokeMethod java.lang.String java.lang.Object</string>
+    <string>method java.lang.Appendable append java.lang.CharSequence</string>
+    <string>method java.lang.Object toString</string>
+    <string>method java.lang.String contains java.lang.CharSequence</string>
+    <string>new java.lang.StringBuilder</string>
+    <string>staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods minus java.lang.String java.lang.Object</string>
+  </approvedSignatures>
+  <aclApprovedSignatures/>
+  <approvedClasspathEntries/>
+  <pendingScripts/>
+  <pendingSignatures/>
+  <pendingClasspathEntries/>
+</scriptApproval>

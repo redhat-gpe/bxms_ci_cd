@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while read oldrev newrev refname
+do
+    branch=$(git rev-parse --symbolic --abbrev-ref $refname)
+    echo $(date) >> /home/git/data/tmp/test.txt
+    if [[ "$branch" == "master" || "$branch" == release* ]]; then
+    	curl -X GET http://172.17.0.63:8080/job/bpms-cicd-release/buildWithParameters?branch=${branch}
+    fi
+done

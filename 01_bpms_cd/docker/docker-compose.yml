@@ -1,0 +1,136 @@
+nexus:
+  build: nexus
+  ports:
+    - "18080:8080"
+  volumes:
+    - /data
+  volumes_from:
+    - bxmscicd_storage
+mysql-bpms:
+  build: mysql-bpms
+  ports:
+    - "3306:3306"
+  volumes:
+    - /var/lib/mysql/data
+  volumes_from:
+    - bxmscicd_storage
+bpms-design:
+  build: bpms-design
+  ports:
+    - "28080:8080"
+  links:
+    - mysql-bpms:mysql
+    - nexus:nexus
+  volumes:
+    - /opt/jboss/bpms-design-data
+  volumes_from:
+    - bxmscicd_storage
+bpms-qa:
+  build: bpms-runtime
+  ports:
+    - "38080:8080"
+  links:
+    - mysql-bpms:mysql
+    - nexus:nexus
+  volumes:
+    - /opt/jboss/bpms-qa-data
+  volumes_from:
+    - bxmscicd_storage
+  environment:
+    - MYSQL_BPMS_SCHEMA=bpmsqa
+    - KIE_SERVER_ID=bpms-qa
+    - BPMS_DATA_DIR=/opt/jboss/bpms-qa-data
+bpms-prod:
+  build: bpms-runtime
+  ports:
+    - "48080:8080"
+  links:
+    - mysql-bpms:mysql
+    - nexus:nexus
+  volumes:
+    - /opt/jboss/bpms-prod-data
+  volumes_from:
+    - bxmscicd_storage
+  environment:
+    - MYSQL_BPMS_SCHEMA=bpmsprod
+    - KIE_SERVER_ID=bpms-prod
+    - BPMS_DATA_DIR=/opt/jboss/bpms-prod-data
+postgresql-gitlab:
+  build: postgresql-gitlab
+  volumes:
+    - /var/lib/pgsql
+  volumes_from:
+    - bxmscicd_storage
+  environment:
+    - DB_NAME=gitlab_production
+    - DB_USER=gitlab
+    - DB_PASS=gitlab
+  ports:
+    - "5432:5432"
+redis-gitlab:
+  build: redis-gitlab
+gitlab:
+  build: gitlab
+  links:
+    - redis-gitlab:redis
+    - postgresql-gitlab:postgresql
+  ports:
+    - "10080:80"
+    - "10022:22"
+    - "443"
+  volumes:
+    - /home/git/data
+    - /var/log/gitlab
+  volumes_from:
+    - bxmscicd_storage
+  environment:
+    - TZ=Europe/Brussels
+    - GITLAB_TIMEZONE=Brussels
+
+    - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alphanumeric-string
+
+    - GITLAB_HOST=localhost
+    - GITLAB_PORT=10080
+    - GITLAB_SSH_PORT=10022
+    - GITLAB_RELATIVE_URL_ROOT=
+
+    - GITLAB_EMAIL=notifications@example.com
+    - GITLAB_EMAIL_REPLY_TO=noreply@example.com
+    - GITLAB_INCOMING_EMAIL_ADDRESS=reply@example.com
+
+    - GITLAB_BACKUPS=disable
+    - GITLAB_BACKUP_TIME=01:00
+
+    - NGINX_MAX_UPLOAD_SIZE=50m
+
+    - SMTP_ENABLED=false
+    - SMTP_DOMAIN=www.example.com
+    - SMTP_HOST=smtp.gmail.com
+    - SMTP_PORT=587
+    - SMTP_USER=mailer@example.com
+    - SMTP_PASS=password
+    - SMTP_STARTTLS=true
+    - SMTP_AUTHENTICATION=login
+
+    - IMAP_ENABLED=false
+    - IMAP_HOST=imap.gmail.com
+    - IMAP_PORT=993
+    - IMAP_USER=mailer@example.com
+    - IMAP_PASS=password
+    - IMAP_SSL=true
+    - IMAP_STARTTLS=false
+jenkins:
+  build: jenkins
+  environment:
+    - JAVA_OPTS=-Djava.awt.headless=true
+  ports:
+    - "8080:8080"
+  volumes:
+    - /opt/jenkins
+  volumes_from:
+    - bxmscicd_storage
+  links:
+    - gitlab:gitlab
+    - nexus:nexus
+    - bpms-qa:bpmsqa
+    - bpms-prod:bpmsprod
