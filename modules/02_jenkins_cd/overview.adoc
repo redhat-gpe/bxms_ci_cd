@@ -1,0 +1,5 @@
+:noaudio:
+
+== Module Overview
+
+This module consists of a lab instruction only.
