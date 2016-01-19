@@ -1,3 +1,4 @@
+:noaudio:
 :data-uri:
 :toc: manual
 :toc-placement: preamble

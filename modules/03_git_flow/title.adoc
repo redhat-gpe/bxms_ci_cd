@@ -1,0 +1,17 @@
+:noaudio:
+
+ifdef::revealjs_slideshow[]
+
+[#cover,data-background-image="image/1156524-bg_redhat.png" data-background-color="#cc0000"]
+== &nbsp;
+
+[#cover-h1]
+CI / CD with Red Hat BPM Suite 
+
+[#cover-h2]
+CD using BPM Suite and the Git Flow process
+
+[#cover-logo]
+image::{revealjs_cover_image}[]
+
+endif::[]
