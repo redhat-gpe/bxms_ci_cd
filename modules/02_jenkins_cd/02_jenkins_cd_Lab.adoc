@@ -1,7 +1,8 @@
 :noaudio:
-:data-uri:
-:toc: manual
-:toc-placement: preamble
+:sectanchors:
+:toc: macro
+:toclevels: 2
+:toc-title: Table of Content
 :jenkins: https://wiki.jenkins-ci.org/display/JENKINS/Use+Jenkins[Jenkins]
 :docker: https://docs.docker.com/[Docker]
 :gitlab: http://doc.gitlab.com/ce/[Git Lab]
@@ -12,6 +13,8 @@
 :jenkinsfile: link:https://github.com/gpe-mw-training/insurancepolicy-jenkins-workflow/blob/master/Jenkinsfile[Jenkinsfile]
 
 = BxMS CI / CD using Jenkins
+
+toc::[]
 
 .Goals.
 . Investigation of CI / CD workflows of business processes and rules using *Jenkins*
