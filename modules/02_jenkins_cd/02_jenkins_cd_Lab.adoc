@@ -9,7 +9,7 @@
 :bxmscicdvm: http://brokern[BxMS CI CD virtual machine]
 :virtualbox: link:https://www.virtualbox.org/wiki/Downloads[Virtual Box]
 :gitignore_template: link:https://gist.github.com/jbride/e578ebafe754fd2d0072[.gitignore template]
-:workflow_plugin: link:https://wiki.jenkins-ci.org/display/JENKINS/Workflow+Plugin[Jenkins Workflow Plugin]
+:pipeline_plugin: link:https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Plugin[Jenkins Workflow Plugin]
 :jenkinsfile: link:https://github.com/gpe-mw-training/insurancepolicy-jenkins-workflow/blob/master/Jenkinsfile[Jenkinsfile]
 
 = BxMS CI / CD using Jenkins
@@ -27,12 +27,48 @@ This reference architecture investigates the use of {jenkins} to orchestrate CI 
 This reference architecture is particularly relevant to software developers already proficient with Jenkins and hosted Git repositories (such as Github or {gitlab}).
 The approach would most likely not be utilized in use cases where the majority of users of Red Hat's `BPM Suite` were business analysts.
 
+=== Highlights:
+
 Highlights of this `Jenkins` focused approach are as follows:
 
 . Master branch of BPM projects is always in a deployable state.
-. Can be fully automated (as per principals of Continuous Delivery and DevOps)
-. System of truth of version controlled BxMS artifacts are the repositories managed in a custom `GitLab` environment.
+. The process can be fully automated (as per principals of Continuous Delivery and DevOps)
+. The system of truth of version controlled BxMS artifacts are the repositories managed in a custom `GitLab` environment.
 . Every developer has their own local BPMS instance.
+
+=== Deployment Topology
+The following diagram depicts the deployment topology of the components that make up this lab:
+
+image::images/deploy_arch.jpeg[]
+
+==== Lab Containers
+
+. *bpmscd_bpms-design*
++
+BPM Suite 6 runtime with both `business-central` and `kie-server` web apps.
+
+. *bpmscd_bpms-qa* and *bpmcd_bpms-prod*
++
+BPM Suite 6 runtime with `kie-server` web app only
+
+. *bpmscd_gitlab*
++
+Web based git repository management tool.
++
+Uses both a `postgresql` and `redis` database.
+
+. *bpmscd_nexus*
++
+Web based artifact repository management tool
+
+. *bpmscd_jenkins*
++
+Web based CI / CD environment
+
+. *bpmscd_storage*
++
+Docker image used for persistent storage.
+Is attached to other docker containers in this lab.
 
 == Pre-Requisites
 
@@ -46,14 +82,15 @@ All of the components (ie:  Jenkins, BPM Suite, GitLab, Nexus ) of the solution 
 `Docker-compose` is used to orchestrate the start-up and shut-down of the containers.
 
 === Resources
-The resource requirements to run this lab are extensive.
+As described in the next section, the virtual machine provided with this course can be optionally downloaded and executed in your local workstation.
+If running the VM in your local workstation, the resource requirements to run this lab are extensive.
 Many operating system processes will be spawn.
 Please ensure that your host lab environment (ie:  local workstation or cloud environment) meets these minimum requirements:
 
 . 10 GB RAM
 . 4 CPUs (64 bit)
 . 25 GB disk space
-. 64-bit {virtualbox} (optional if running the lab in your local workstation)
+. 64-bit {virtualbox}
 
 [[vm]]
 == BxMS CI / CD Virtual Machine
@@ -80,10 +117,6 @@ The following table lists the operating system users pre-configured on the virtu
 |root|jb0ssredhat!|OS admin privledges
 |==============================================
 
-== Deployment Topology
-The following diagram depicts the deployment topology of the components that make up this lab:
-
-
 == Setup
 This section of the lab assumes that :
 
@@ -107,8 +140,6 @@ If not using the `bxmscicd` virtual machine, this project can be cloned as follo
 -----
 git clone https://github.com/jboss-gpe-ref-archs/bxms_ci_cd.git
 -----
-
-
 
 ==== Build images
 
@@ -202,7 +233,7 @@ image::images/nexus_public.png[width="70%"]
 You have finished configuring `Nexus`.
 
 ==== GitLab: `joe` user
-This lab exercise, a BPM / Java developer whose name is `joe` utilizes the Red Hat BPM product to create and run business processes and rules.
+In this lab exercise, a BPM / Java developer whose name is `joe` utilizes the Red Hat BPM product to create and run business processes and rules.
 
 `joe` needs the ability to push his changes (in the master branch of the `insurancepolicy` git repo) to the version control system, `GitLab`, that `joe` and his team have selected to collaborate amongst eachother on.
 
@@ -217,7 +248,7 @@ So as to be consistent with most of the passwords used in this lab, its recommen
 .. Click the green `New user` button.  Populate the form as follows:
 ... *Name*:  joe
 ... *username*: joe
-... *Email*: provide any email (this email is never ued in this lab
+... *Email*: provide any email (this email is never ued in this lab )
 .. At the bottom of the form, click the green `Create user` button.
 .. Typically, a new user confirmation email would have been sent out to: `joe`.
 +
@@ -257,14 +288,14 @@ The `ssh` protocol is used to push and pull code to/from the git repositories in
 In this section of the lab, public ssh keys will be registered with the newly created `joe` and `jenkins` users in GitLab.
 
 NOTE: SSH key pairs for both `joe` and `jenkins` have already been generated in the <<vm>>.
-These SSH key pairs are located at: `home/jboss/.ssh`.
+These SSH key pairs are located at following path on the host virtual machine: `/home/jboss/.ssh`.
 
 Execute the following for both `joe` and `jenkins`.
 
 . Log out of `Gitlab` and log back in as the newly created user (`joe` and `jenkins`).
 . In the top toolbar of `gitlab`, navigate to: `Profile Settings -> ssh keys`
 . Click the green `Add SSH Key` button
-. In a terminal window execute, `cat $HOME/.ssh/id_joe.pub`, as the `jboss` operating system user:
+. In a terminal window on the virtual machine execute, `cat $HOME/.ssh/id_joe.pub`, as the `jboss` operating system user:
 +
 -----
 $ cat $HOME/.ssh/id_joe.pub
@@ -295,7 +326,7 @@ In this section, the `insurancepolicy` git repository will be created:
 image::images/gitlab_create_project.png[]
 . Click the green `Create project` at the bottom of the form.
 
-Congratulations!  You have completed with configuration of GitLab.
+Congratulations!  You have completed configuration of GitLab.
 
 ==== BPM Suite: `insurancepolicy` repo
 The `bpmscd_bpms-design-*` container needs to be seeded with an existing `insurancepolicy` repo that contains a single BPMN2 process definition.
@@ -372,7 +403,7 @@ Congratulations! You are done configuring the BPMS-design container and your loc
 
 ==== Jenkins
 The `Jenkins` container provided as part of this lab is pre-configured a job called: `bpms-cicd`.
-The `bpms-cicd` job leverages the {workflow_plugin} to orchestrate continuous integration and delivery of business process and rules from `Dev` -> `QA` -> `Prod`.
+The `bpms-cicd` job leverages the {pipeline_plugin} to orchestrate continuous integration and delivery of business process and rules from `Dev` -> `QA` -> `Prod`.
 
 For the purposes of this lab, no additional Jenkins configuration changes are needed.
 However, it is important to review and understand the `bpms-cicd` job.
@@ -384,7 +415,8 @@ image::images/jenkins_job.png[]
 . Click on `bpms-cicd` link and on the left panel of the `Workflow bpms-cicd` page, click `Configure`.
 . The `bpms-cicd` Jenkins job itself is actually quite simple.
 +
-In essence, it delegate all CI/CD logic to the workflow plugins and a custom Groovy script called: {jenkinsfile}.
+In essence, it delegates all CI/CD logic to the Jenkins `workflow` plugin.
+The Jenkins `workflow` plugin executes a custom Groovy script called: {jenkinsfile}.
 
 == BxMS CI/CD: Manual Execution
 Now that all set-up and configuration has been completed, its now time to see CI / CD of business processes and rule in action.
@@ -555,7 +587,7 @@ docker ps -a
 .. Execute:
 +
 -----
-sudo nsenter -m -u -n -i -p -t `docker inspect --format '{{ .State.Pid }}' docker_nexus_1` /bin/bash
+sudo docker exec -it docker_nexus_1 /bin/bash
 -----
 
 ==== Stop all containers
@@ -592,7 +624,7 @@ NOTE: Replace `<fqdn>` with the fully qualified domain name of the host operatin
 |bpmscd_gitlab_1|<fqdn>:10080|/var/log/gitlab/gitlab/application.log|root / 5iveL!fe
 |bpmscd_jenkins_1|<fqdn>:8080||Security not enabled
 |bpmscd_bpms-design_1|<fqdn>:28080/business-central|/opt/jboss/bpms/standalone/log/server.log|joe / jb0ssredhat!
-|bpmscd_bpms-qa_1|<fqdn>:38080/kie-server/services/rest/server||jbos / jb0ssredhat!
+|bpmscd_bpms-qa_1|<fqdn>:38080/kie-server/services/rest/server||jboss / jb0ssredhat!
 |bpmscd_bpms-prod_1|<fqdn>:48080/kie-server/services/rest/server||jboss / jb0ssredhat!
 |==============================================
 
