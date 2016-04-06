@@ -6,8 +6,6 @@
 :jenkins: https://wiki.jenkins-ci.org/display/JENKINS/Use+Jenkins[Jenkins]
 :docker: https://docs.docker.com/[Docker]
 :gitlab: http://doc.gitlab.com/ce/[Git Lab]
-:bxmscicdvm: http://brokern[BxMS CI CD virtual machine]
-:virtualbox: link:https://www.virtualbox.org/wiki/Downloads[Virtual Box]
 :gitignore_template: link:https://gist.github.com/jbride/e578ebafe754fd2d0072[.gitignore template]
 :pipeline_plugin: link:https://wiki.jenkins-ci.org/display/JENKINS/Pipeline+Plugin[Jenkins Workflow Plugin]
 :jenkinsfile: link:https://github.com/gpe-mw-training/insurancepolicy-jenkins-workflow/blob/master/Jenkinsfile[Jenkinsfile]
@@ -37,7 +35,7 @@ Highlights of this `Jenkins` focused approach are as follows:
 . Every developer has their own local BPMS instance.
 
 === Deployment Topology
-The following diagram depicts the deployment topology of the components that make up this lab:
+The following diagram depicts the deployment topology of the Docker containers that make up this lab:
 
 image::images/deploy_arch.jpeg[]
 
@@ -80,32 +78,62 @@ Is attached to other docker containers in this lab.
 This lab exercise makes use of Docker.
 All of the components (ie:  Jenkins, BPM Suite, GitLab, Nexus ) of the solution are wrapped and deployed within Docker containers.
 `Docker-compose` is used to orchestrate the start-up and shut-down of the containers.
+. Experience with ssh
 
 === Resources
-As described in the next section, the virtual machine provided with this course can be optionally downloaded and executed in your local workstation.
-If running the VM in your local workstation, the resource requirements to run this lab are extensive.
-Many operating system processes will be spawn.
-Please ensure that your host lab environment (ie:  local workstation or cloud environment) meets these minimum requirements:
 
-. 10 GB RAM
-. 4 CPUs (64 bit)
-. 25 GB disk space
-. 64-bit {virtualbox}
+. Broadband internet access
+. ssh client
+. Web browser
 
 [[vm]]
 == BxMS CI / CD Virtual Machine
 In order to quickly get you productive with this lab, a virtual machine (pre-installed with all of the needed components) is provided.
 
-The virtual machine that complements this lab is provided in two forms:
+The virtual machine that complements this lab is in Red Hat's Partner Demo System:
 
-. `Red Hat Partner Demo System`
-+
-More information about acquiring a cloud based lab environment can be found in the appendix: <<pdsvm>>
-. `Virtual Box`
-+
-More information about executing this lab in your local environment via Virtual Box can be found in the appendix: <<vbvm>>
+=== Register for a Virtual Machine
+In this section of the lab, you register for a lab environment.
 
-These lab instructions assume you are making use of this virtual machine (either in the cloud or locally in Virtual Box).
+. Identify your Red Hat OPENTLC user id.
++
+[TIP]
+If you are unsure of your Red Hat OPENTLC credentials, you can reset your credentials at: `https://www.opentlc.com/pwm/private/Login`. If problems persist, please email `open-program@redhat.com`.
+
+. In your browser, navigate to `https://labs.opentlc.com`:
++
+image::images/cf_login.png[]
+
+. Enter your OPENTLC username and password and click *Login*.
+
+. Navigate to *Services -> Catalogs -> OPENTLC Middleware Solutions Labs*.
++
+image::images/cf_course_selection.png[]
+
+. From the list, select *BXMS CI CD*, as shown in the image above.
+. Click *Order* in the right panel:
++
+image::images/cf_order_button.png[]
+
+. Check the acknowledgement checkbox and click *Submit* in the lower right corner of the panel:
++
+image::images/cf_submit_button.png[]
+
+. You should receive an email soon after entitled _Your OPENTLC service request for BXMS CI CD is building_.
++
+Read through this email carefully.  It contains details about your new virtual machine.
+
+=== Access Virtual Machine
+
+. In the virtual machine registration confirmation email, make note of the value of your virtual machine's _External Hostname_
++
+image::images/external_hostname_email.png[]
+
+. SSH into your new remote BxMS CI CD virtual machine using your _OPENTLC ID_.
++
+-----
+ssh <opentlc_id>@<external_hostname>
+-----
 
 === Virtual Machine users
 The following table lists the operating system users pre-configured on the virtual machine that compliments these lab instructions:
@@ -116,6 +144,15 @@ The following table lists the operating system users pre-configured on the virtu
 |jboss|jb0ssredhat!|Used for most operations in this lab instruction
 |root|jb0ssredhat!|OS admin privledges
 |==============================================
+
+Once at the command line of the virtual machine, switch users to _jboss_ using the password listed in the table above:
+
+-----
+$ su - jboss
+Password:
+Last login: Wed Apr  6 17:12:19 EDT 2016 on pts/0
+jboss@bxmscicd-5ff9 ~ $
+-----
 
 == Setup
 This section of the lab assumes that :
