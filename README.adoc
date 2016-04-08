@@ -11,15 +11,15 @@ image::01_bpms_cd/images/rhheader.png[width=900]
 :numbered:
 
 == PURPOSE:
-The purpose of this reference architecture is to introduce various Continuous Integration / Delivery (CI / CD) workflows when working with the Red Hat JBoss BPM Suite product.
+The purpose of this lab is to introduce various Continuous Integration / Delivery (CI / CD) workflows when working with the Red Hat JBoss BPM Suite product.
 
 == OVERVIEW:
-This reference architecture investigates the following CI / CD workflows:
+This lab investigates the following CI / CD workflows:
 
 === BPM Suite Centric CI / CD
-In this approach, the out-of-the-box CI / CD features provided by the BPM Suite 6 product are utilized.
+In this module, the out-of-the-box CI / CD features provided by the BPM Suite 6 product are utilized.
 
-This reference architecture is particularly relevant to those with experience with other BPM products that also provide native support for continuous integration and delivery.
+This module is particularly relevant to those with experience with other BPM products that also provide native support for continuous integration and delivery.
 
 Highlights of this `BPMS Driven Delivery` approach include:
 
@@ -30,21 +30,21 @@ Highlights of this `BPMS Driven Delivery` approach include:
 Details can be found in the {01bpmscicd}.
 
 === CI / CD using Jenkins
-In this approach, Jenkins is utilized to orchestrate CI / CD workflows of BxMS business processes and rules.
+In this module, Jenkins is utilized to orchestrate CI / CD workflows of BxMS business processes and rules.
 
-This reference architecture is particularly relevant to software developers already proficient with (and have an appreciation for) Jenkins and hosted Git repositories (such as Github or Gitlab).
+This module is particularly relevant to software developers already proficient with (and have an appreciation for) Jenkins and hosted Git repositories (such as Github or Gitlab).
 
 Highlights of this `Jenkins` focused approach are as follows:
 
 . Master branch of BPM projects is always in a deployable state.
-. Can be fully automated (as per principals of Continuous Delivery and DevOps)
+. Can be fully automated (as per principles of Continuous Delivery and DevOps)
 . System of truth of version controlled BxMS artifacts are the repositories managed in a custom `GitLab` environment.
 . Every developer has their own local BPMS instance.
 
 Details can be found in the {02jenkinscd}.
 
 === CI / CD via the Git Flow Model
-In this approach, Jenkins and GitLab continue to be utilized to orchestrate CI / CD workflows of BxMS business processes and rules.
+In this module, Jenkins and GitLab continue to be utilized to orchestrate CI / CD workflows of BxMS business processes and rules.
 Additionally, the {gitflow} approach is leveraged.
 
 Highlights of this `Git flow` approach are as follows:
