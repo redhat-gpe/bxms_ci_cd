@@ -6,6 +6,7 @@ image::01_bpms_cd/images/rhheader.png[width=900]
 :03gitflow: link:modules/03_git_flow/03_git_flow_Lab.adoc[Git Flow Model README]
 :gitflow: link:http://nvie.com/posts/a-successful-git-branching-model/[Git Flow]
 
+
 = BxMS Continuous Integration / Delivery
 
 :numbered:
