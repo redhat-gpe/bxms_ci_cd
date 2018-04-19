@@ -23,7 +23,48 @@ toc::[]
 
 :numbered:
 
-== Assumptions
+== Scalable Workspaces
+
+The primary goals of _Scalable Workspaces_ is to provide:
+
+. A user-friendly version control workflow experience for citizen technologists
+. A provide a cloud-ready scalable foundation for our platform.
+
+Current features include:
+
+. *Spaces based navigation*
+. *Project-oriented UI*
++
+This UX is intuitive to the citizen developer because among other reasons it hides all the complexities of version control repositories.
+
+. *Project-Oriented backend* 
++
+Each repository has only one project.
+This is an important step for distributed maven and fork/sync capabilities. 
++
+Also included is a migration tool for this new structure.
+
+. *New Git Clustering*
++
+ZooKeeper and Helix (utilized in previous versions of the product) have been replaced in favor of a scalable and cloud-ready cluster solution (based on JMS and the _uberfire_ based Virtual File System).
+
+=== Future Improvements
+
+. *Distributed Maven Builds*
+
+. *Fork/Sync capabilities on the Workbench (A transparent/simplified PR system)*
+
+With that in place, we will achieve a really great solution for a git workflow. Users will have automagically their own 'copy' of the projects and will collaborate each other via a simplified Pull Request like system (removing the need for developer branches).
+
+Maven will give us the required scalability in order to build multiple 'copies' of the same project without impacting overall workbench performance and experience and finally, the new cluster solution will allow our platform to scale transparently in a cloud environment. 
+
+The above scenario will allow an improvement external integration experience, down the road there’s also plans for web-hooks for two-way integration.
+
+With that said, the use of external repos isn't much aligned with git architecture itself. Git is a distributed system by nature and things can go really bad if data is out of sync by any side. This is a complex issue to solve, that probably can be better addressed by just enabling external sync or, with PR subsystem in place, a better use of Git hooks. We even plan to offer a “mirror” option, but don’t get us wrong, there won’t be a magical solution to the distributed nature of Git.
+
+As soon as we have all those pieces in place I believe we will have what most of the users need and they will be happy with this solution, but keep in mind that this is really different than saying "use an external git".
+
+== Lab Use Case Assumptions
 
 . Most members of the development team are less technical, and/or have little or no experience with tools like git, maven.
 . Development team uses BPMS as their primary development tool. The development team uses a shared BPMS instance

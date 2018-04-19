@@ -7,22 +7,22 @@ image::01_bpms_cd/images/rhheader.png[width=900]
 :gitflow: link:http://nvie.com/posts/a-successful-git-branching-model/[Git Flow]
 
 
-= BxMS Continuous Integration / Delivery
+= Continuous Integration / Delivery using RHDM and RHPAM
 
 :numbered:
 
 == PURPOSE:
-The purpose of this lab is to introduce various Continuous Integration / Delivery (CI / CD) workflows when working with the Red Hat JBoss BPM Suite product.
+The purpose of this course is to introduce various Continuous Integration / Delivery (CI / CD) workflows when working with the Red Hat Decision Management (RHDM) and Process Automation Management (RHPAM) products .
 
 == OVERVIEW:
 This lab investigates the following CI / CD workflows:
 
-=== BPM Suite Centric CI / CD
-In this module, the out-of-the-box CI / CD features provided by the BPM Suite 6 product are utilized.
+=== Collaboration and CI/CD Using _Scalable Workspaces_
+In this module, the out-of-the-box _Scalable Workspaces_ features provided by the RHDM and RHPAM products are utilized.
 
 This module is particularly relevant to those with experience with other BPM products that also provide native support for continuous integration and delivery.
 
-Highlights of this `BPMS Driven Delivery` approach include:
+Highlights of this `Scalable Workspaces Driven Delivery` approach include:
 
 . Developers and business analysts collaborate on the same BPM Suite environment.
 . The `managed repository` feature from BPM Suite is utilized .
@@ -30,7 +30,7 @@ Highlights of this `BPMS Driven Delivery` approach include:
 
 Details can be found in the {01bpmscicd}.
 
-=== CI / CD using Jenkins
+=== Developer Centric Collaboration and CI/CD 
 In this module, Jenkins is utilized to orchestrate CI / CD workflows of BxMS business processes and rules.
 
 This module is particularly relevant to software developers already proficient with (and have an appreciation for) Jenkins and hosted Git repositories (such as Github or Gitlab).
